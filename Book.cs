@@ -8,6 +8,7 @@ namespace GradeBook
   {
     private List<double> grades;
     private string _name;
+    private int _numGrades;
 
 
     public Book()
@@ -128,17 +129,37 @@ namespace GradeBook
     
     public bool RunProgramAgain()
     {
-      bool result = false;
+      bool result = true;
 
-      Console.Write("Do you want to try again? [Y/N]");
+      Console.Write("Do you want to try again? [Y/N]: ");
       char answer = char.Parse(Console.ReadLine().Trim().ToLower());
 
-      if (answer == 'n')
+      switch (answer)
       {
-        Console.WriteLine();
-        Console.WriteLine("Program exiting...");
-        result = false;
+        case 'n':
+          Console.WriteLine();
+          Console.WriteLine("Program exiting...");
+          result = false;
+          break;
+        case 'y':
+          Console.WriteLine();
+          result = true;
+          break;
+        default:
+          Console.WriteLine();
+          Console.WriteLine("Program exiting...");
+          result = false;
+          break;
       }
+      Console.WriteLine();
+
+      return result;
+    }
+
+
+    public bool CheckNumberGrades(int numGrades)
+    {
+      bool result = numGrades == grades.Count;
 
       return result;
     }
@@ -149,7 +170,7 @@ namespace GradeBook
       bool result = true;
       do
       {
-        Console.WriteLine("Please enter number of grades to be calculated: ");
+        Console.Write("Please enter number of grades to be calculated: ");
         var numGrades = int.Parse(Console.ReadLine().Trim());
 
         Console.Write("Pleas enter grades. Separate them with spaces: ");
@@ -160,11 +181,19 @@ namespace GradeBook
         if (!result)
         {
           result = false;
+          Console.WriteLine();
           Console.WriteLine("Sorry. Computation error.");
         } 
         else
         {
-          ComputeStatistics();
+          if (CheckNumberGrades(numGrades))
+          {
+            Console.WriteLine();
+            ComputeStatistics();
+            ShowStatistics();
+            Console.WriteLine();
+          }
+          else result = false;
         }
 
         result = RunProgramAgain();
