@@ -33,11 +33,12 @@ namespace GradeBook
 
     public bool AddGrade(double grade)
     {
-      bool result;
+      bool result = false;
 
       if ((grade > 100) || (grade < 0))
       {
-        result = false;
+        Console.WriteLine();
+        throw new ArgumentException($"Invalid {nameof(grade)}: {grade}");
       }
       else
       {
@@ -113,20 +114,48 @@ namespace GradeBook
     }
 
 
-    public bool CleanUserInput(List<string> rawInput)
+    public bool CleanUserInput(List<string> rawInput, int numGrades)
     {
       bool result = false;
 
-      foreach (var item in rawInput)
+
+      if (rawInput.Count == numGrades)
       {
-        result = double.TryParse(item, out double grade);
-        result = AddGrade(grade);
+
+        foreach (var item in rawInput)
+        {
+          try
+          {
+            result = double.TryParse(item, out double grade);
+
+            if (result)
+            {
+              result = AddGrade(grade);
+            }
+            else
+            {
+              Console.WriteLine("Invalid input.");
+              result = false;
+              break;
+            }
+          }
+          catch (Exception ex)
+          {
+            Console.WriteLine(ex.Message);
+          }
+        }
+      } else
+      {
+        Console.WriteLine();
+        Console.WriteLine("Number of grades does not match with number our courses.");
+        Console.WriteLine();
+        result = false;
       }
 
       return result;
     }
 
-    
+
     public bool RunProgramAgain()
     {
       bool result = true;
@@ -144,6 +173,7 @@ namespace GradeBook
         case 'y':
           Console.WriteLine();
           result = true;
+          Clear();
           break;
         default:
           Console.WriteLine();
@@ -157,6 +187,9 @@ namespace GradeBook
     }
 
 
+    private void Clear() => grades.Clear();
+
+
     public bool CheckNumberGrades(int numGrades)
     {
       bool result = numGrades == grades.Count;
@@ -168,6 +201,7 @@ namespace GradeBook
     public void Prompt()
     {
       bool result = true;
+
       do
       {
         Console.Write("Please enter number of grades to be calculated: ");
@@ -176,24 +210,31 @@ namespace GradeBook
         Console.Write("Pleas enter grades. Separate them with spaces: ");
         var rawInput = Console.ReadLine().Trim().Split(" ").ToList();
 
-        result = CleanUserInput(rawInput);
+        result = CleanUserInput(rawInput, numGrades);
 
-        if (!result)
+        if (result)
         {
-          result = false;
-          Console.WriteLine();
-          Console.WriteLine("Sorry. Computation error.");
-        } 
-        else
-        {
-          if (CheckNumberGrades(numGrades))
+          if (!result)
+          {
+            result = false;
+            Console.WriteLine();
+            Console.WriteLine("Sorry. Computation error.");
+          }
+          else
           {
             Console.WriteLine();
-            ComputeStatistics();
-            ShowStatistics();
+            if (grades.Count == numGrades)
+            {
+              ComputeStatistics();
+              ShowStatistics();
+            }
+            else result = false;
             Console.WriteLine();
           }
-          else result = false;
+        }
+        else
+        {
+          result = false;
         }
 
         result = RunProgramAgain();
