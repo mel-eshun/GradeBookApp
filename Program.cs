@@ -7,21 +7,8 @@ namespace GradeBook
   {
     static void Main()
     {
-
-      //var book = new Book
-      //{
-      //  Name = "The Archer"
-      //};
-
-      //book.AddGrade(72.25);
-      //book.AddGrade(90.8);
-      //book.AddGrade(50.57);
-      //book.AddGrade(59.0);
-
-      //book.ShowStatistics();
-
-      var book = new Book();
-      book.Prompt();
+      var app = new GradeApp();
+      app.Prompt();
     }
   }
 }
